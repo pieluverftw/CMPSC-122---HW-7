@@ -9,7 +9,7 @@ Roger Christman, Pennsylvania State University
 """
 from abc import ABCMeta,abstractmethod
 from vartree import BinaryTree
-from machine import
+#from machine import machine
 
 class ExprTree(metaclass=ABCMeta):
     """Abstract class for expression"""
@@ -43,7 +43,7 @@ class Value(ExprTree):
         return self._value
     def comp(self):
         newInstr = Instruction(self._value)
-        prog.append(newInstr )
+        program.append(newInstr )
 
 class Var(ExprTree):
     """A variable leaf"""
@@ -64,7 +64,7 @@ class Var(ExprTree):
 
 class Oper(ExprTree):
     """A binary operation"""
-    def __init__(self, l, o, r, t):
+    def __init__(self, l, o, r, t = 0):
         self._left = l
         self._oper = o
         self._right = r
@@ -89,7 +89,7 @@ class Oper(ExprTree):
             v2 = self._right.evaluate(variables, functions)
             return eval( str(v1)+self._oper+str(v2) )
     def comp(self, expr, vartree, functree, resultset):
-
+        pass
 
 class Cond(ExprTree):
     """A conditional expression"""
@@ -136,10 +136,12 @@ class Func(ExprTree):
         pass
 
 class compile_tree(ExprTree):
-    def __init__ (self, op):
+    def __init__ (self, tree, var, func, pc):
+
 
 class Print(ExprTree):
-
+    def __init__ (self, reg):
+        return
 
 
 if __name__ == '__main__':
