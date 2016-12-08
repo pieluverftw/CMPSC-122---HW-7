@@ -18,15 +18,13 @@ class Print(Instruction):
 
 class Init (Instruction):
     # test
-    def __init__ (self, value):
+    def __init__(self, value):
         self._temp = value
     #Instruction._temp += 1
 
     def compute(self):
         return eval(str(self._temp))
     # /test
-
-    pass
 
 class Load (Instruction):
     def __init__(self, var, variables):
@@ -43,10 +41,12 @@ class Load (Instruction):
 
 class Store(Instruction):
     def __init__(self, instr, var, variables):
+        self._var = var
+        self._tree = variables
         variables.assign(var, instr.compute())          # instr not yet defined
 
-    def compute(self):
-        return
+    def compute(self, variables):
+        return self._tree.lookup(self._var)
     # test
     #stack.push(temp[t]0)
     #Instruction._temp += 1
