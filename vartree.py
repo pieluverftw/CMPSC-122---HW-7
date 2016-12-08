@@ -1,19 +1,19 @@
 class BinaryTree:
     class Node:
-        __slots__ = "_value", "_left", "_right", "_var"
-        def __init__(self, l, vr, v, r, i):
+        __slots__ = "_value", "_left", "_right", "_var", "_indexNode"
+        def __init__(self, l, vr, v, r, i = 0):
             self._left = l
             self._var = vr
             self._value = v
             self._right = r
-            self._index = i
-    __slots__ = "_root", "_size"
+            self._indexNode = i
 
+    __slots__ = "_root", "_size", "_indexTree"
     # Initialize binary tree with a root value of None
     def __init__(self):
         self._root = None
         self._size = 0
-        self._indexAll = 0
+        self._indexTree = 0
 
 
     def _search(self, here, var):
@@ -43,19 +43,19 @@ class BinaryTree:
             return self.Node(here._left, here._var, value, here._right, indexTemp)
 
         elif var > here._var:
-            self._indexAll += 1
-            return self.Node(here._left, here._var, here._value, self._insert(here._right, var, value), self._indexAll)
+            self._indexTree += 1
+            return self.Node(here._left, here._var, here._value, self._insert(here._right, var, value), self._indexTree)
 
         elif var < here._var:
-            self._indexAll += 1
-            return self.Node(self._insert(here._left, var, value), here._var, here._value, here._right, self._indexAll)
+            self._indexTree += 1
+            return self.Node(self._insert(here._left, var, value), here._var, here._value, here._right, self._indexTree)
 
 
     def assign(self, var, value):
 
         self._root = self._insert(self._root, var, value)
 
-    def _lookup(self, var):
+    def lookup(self, var):
 
         search_node = self._search(self._root, var)
         if search_node is None:
