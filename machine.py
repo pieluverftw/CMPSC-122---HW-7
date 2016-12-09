@@ -18,21 +18,27 @@ class Print(Instruction):
 
 class Init (Instruction):
     # test
-    def __init__(self, value):
-        self._temp = value
+    def __init__(self, v):
+        self._value = v
+    def __str__(self):
+        return "T" + str(self._temp) + " = " + str(self._value)
     #Instruction._temp += 1
-
-    def compute(self):
-        return eval(str(self._temp))
+    def execute(self, temps, stack, pc, sp):
+        return temps[self._temp]
     # /test
 
 class Load (Instruction):
-    def __init__(self, var, variables):
-        val = variables.lookup(var)
-        Instruction.__init__(self, val)
+    def __init__(self, var, variables, pc, sp):
+        self._temp = variables.lookup(var)
+        self._stackPoint = sp
+        self._progCode = pc
 
-    def compute(self):
-        return eval(str(self._temp))
+    def __str__(self, variables):
+        return  "T" + str(self._temp) + " = stack[" + str(self._stackPoint) + "]"
+
+    def execute(self, temps, stack, pc, sp):
+        temps[self._temp] = stack[sp]
+        return temps[self._temp]
 
     # test
     # temp[t]= v1
@@ -44,20 +50,33 @@ class Store(Instruction):
         self._var = var
         self._tree = variables
         variables.assign(var, instr.compute())          # instr not yet defined
+        self._stackPoint = variables.lookup(var)
 
-    def compute(self, variables):
+    def __str__(self, variables):
+        return "stack[" + str(self._stackPoint) + "] = T" + str(self._temp)
+
+    def execute(self, temps, stack, pc, sp):
+        stack[sp] = temps[self._temp]
+        # return stack[sp]                              # If the function wants to return the exact value
         return self._tree.lookup(self._var)
+
     # test
     #stack.push(temp[t]0)
     #Instruction._temp += 1
     #return
     # /test
 
-class Compute(Instruction)
+class Compute(Instruction):
     def __init__ (self, l, op, r):
         self._left = l
         self._oper = op
         self._right = r
-    def compute(self):
-        return eval(left + oper + right )
+
+    def __str__ (self):
+        return "T" + str(self._temp) + " = T" + str(self._left._temp) + \
+               str(self._oper) + "T" + str(self._right._temp)
+
+    def execute(self, temps, stack, pc, sp):
+        return eval(self._left + self._oper + self._right )
         #Instruction._temp += 1
+
