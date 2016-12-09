@@ -9,7 +9,7 @@ Roger Christman, Pennsylvania State University
 """
 from abc import ABCMeta,abstractmethod
 from vartree import BinaryTree
-#from machine import machine
+from machine import *
 
 class ExprTree(metaclass=ABCMeta):
     """Abstract class for expression"""
@@ -41,9 +41,9 @@ class Value(ExprTree):
         yield self._value
     def evaluate(self, variables, functions):
         return self._value
-    def comp(self):
-        newInstr = Instruction(self._value)
-        program.append(newInstr )
+    def comp(self, expr, vartree, functree, code):
+        newInstr = Init(self._value)
+        code.append(newInstr)
 
 class Var(ExprTree):
     """A variable leaf"""
@@ -55,10 +55,10 @@ class Var(ExprTree):
         yield self._name
     def evaluate(self, variables, functions):
         return variables.lookup(self._name)
-    def comp(self):
+    def comp(self, expr, vartree, functree, code):
         #test
-        newInstr = Instruction(variables.lookup(self._name))
-        prog.append(newInstr)
+        newInstr = Load(vartree.lookup(self._name))
+        code.append(newInstr)
         #test end
         #return "T" + variables.searchIndex()
 
@@ -88,8 +88,16 @@ class Oper(ExprTree):
             v1 = self._left.evaluate(variables, functions)
             v2 = self._right.evaluate(variables, functions)
             return eval( str(v1)+self._oper+str(v2) )
-    def comp(self, expr, vartree, functree, resultset):
-        pass
+    def comp(self, expr, vartree, functree, code):
+        if self._oper == '=':
+            ans = self._right.comp(expr, vartree, functree, code)
+            code.append(Store(ans))
+        else:
+            v1 = self._left.comp(expr, vartree, functree, code)
+            v2 = self._right.comp(expr, vartree, functree, code)
+            ans = eval(v1 + self._oper + v2)
+            code.append(Store(ans))
+
 
 class Cond(ExprTree):
     """A conditional expression"""
@@ -135,9 +143,18 @@ class Func(ExprTree):
     def comp(self):
         pass
 
+
+# In case compile_tree is a class instead of a function
+"""
 class compile_tree(ExprTree):
     def __init__ (self, tree, var, func, pc):
-
+        self._exprTree = tree
+        self._varTree = var
+        self._functions = func
+        self._progCode = pc
+"""
+def compile_tree(tree, var, func, pc):
+    return ()
 
 class Print(ExprTree):
     def __init__ (self, reg):
